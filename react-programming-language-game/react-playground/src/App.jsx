@@ -10,7 +10,7 @@ function App() {
 
 const [gameStats, setGameStats] = useState([])
   const [gameMessage,setGameMessage] = useState("") // set success or failure message
-  const [isCorrect, setIsCorrect] = useState(true) //checks whethere the language color combination is correct
+  const [isCorrect, setIsCorrect] = useState(false) //checks whethere the language color combination is correct
   const [failureCount, setFailureCount] = useState(0) //count total number of errors
   const [gameCount, setGameCount] = useState(0)
   const [gameOver, setGameOver] = useState(false)
@@ -75,7 +75,7 @@ const [gameStats, setGameStats] = useState([])
     // Update gameStats state
     setGameStats((prevStats) => [
       ...prevStats,
-      { lang: gameData.progLang, color: gameData.color, isRight: isCorrect },
+      { lang: gameData.progLang, color: gameData.color, isRight: found },
     ]);
 
     // Clear input fields after submission
@@ -120,7 +120,7 @@ const [gameStats, setGameStats] = useState([])
         </p>
         <h3>The different attempts </h3>
       <ul>{gameStats.map((stat,index)=>(
-        <li key={index}>{stat.lang} - {stat.color}- {stat.isRight ? <DoneIcon style={{color:"green"}}/> : <CloseIcon tyle={{color:"red"}}/>}</li>
+        <li key={index}>{stat.lang} - {stat.color} {stat.isRight ? <DoneIcon style={{color:"green"}}/> : <CloseIcon style={{color:"red"}}/>}</li>
       ))}</ul>
       </div>
     </div>
