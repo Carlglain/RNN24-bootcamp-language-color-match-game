@@ -1,25 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
-import DoneIcon from '@mui/icons-material/Done';
-import CloseIcon from '@mui/icons-material/Close';
+import DoneIcon from "@mui/icons-material/Done";
+import CloseIcon from "@mui/icons-material/Close";
 function App() {
   const [gameData, setGameData] = useState({
     progLang: " ",
     color: " ",
   });
 
-const [gameStats, setGameStats] = useState([])
-  const [gameMessage,setGameMessage] = useState("") // set success or failure message
-  const [isCorrect, setIsCorrect] = useState(false) //checks whethere the language color combination is correct
-  const [failureCount, setFailureCount] = useState(0) //count total number of errors
-  const [gameCount, setGameCount] = useState(0)
-  const [gameOver, setGameOver] = useState(false)
+  const [gameStats, setGameStats] = useState([]);
+  const [gameMessage, setGameMessage] = useState(""); // set success or failure message
+  const [isCorrect, setIsCorrect] = useState(false); //checks whethere the language color combination is correct
+  const [failureCount, setFailureCount] = useState(0); //count total number of errors
+  const [gameCount, setGameCount] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
   const handleChange = (event) => {
     const { name, value } = event.target;
     setGameData((prevData) => {
       return { ...prevData, [name]: value.trim() };
     });
   };
+  const[langColVisility, setLangColVisility] =useState(true); //to control the visibility of the language colorr list
+  useEffect(() => {
+    const timer = setTimeout(() =>{
+      setLangColVisility(false)
+    },4000)
+  }, []);
   // Database of programming languages and their colors
   const db = [
     { lang: "Java", color: "Blue" },
@@ -43,14 +49,14 @@ const [gameStats, setGameStats] = useState([])
   ];
   const handleSubmit = (e) => {
     e.preventDefault();
-    setGameCount(count => count + 1)
-    if (gameCount == 19 || failureCount == 4){
-      alert("Game Over!")
-      setGameOver(true)
-      if(failureCount == 4){
-        alert("You have reached 5 failures!")
+    setGameCount((count) => count + 1);
+    if (gameCount == 19 || failureCount == 4) {
+      alert("Game Over!");
+      setGameOver(true);
+      if (failureCount == 4) {
+        alert("You have reached 5 failures!");
       }
-      return
+      return;
     }
     let found = false;
 
@@ -71,7 +77,7 @@ const [gameStats, setGameStats] = useState([])
       setIsCorrect(false);
       setFailureCount((ct) => ct + 1);
       console.log(failureCount);
-    } 
+    }
     // Update gameStats state
     setGameStats((prevStats) => [
       ...prevStats,
@@ -84,45 +90,78 @@ const [gameStats, setGameStats] = useState([])
   return (
     <div>
       <h1>Programming Language color match game</h1>
-      <h3>Instructions</h3>
-      <p>
-        To play this game you have to enter a programming language in the first
-        field and it's color match in the second field
-      </p>
-      <div className="all-lang-color"></div> {/* display all languages and color combinations for few seconds */}
-
-      <form onSubmit={(e) => handleSubmit(e)}>
-        <label htmlFor="l1">Programming Language: </label>
-        <input
-          id="l1"
-          type="text"
-          name="progLang"
-          className="br"
-          onChange={handleChange}
-          value={gameData.progLang}
-        />{" "}
-        <br />
-        <label htmlFor="l2">Language color: </label>{" "}
-        <input
-          type="text"
-          name="color"
-          onChange={handleChange}
-          value={gameData.color}
-        ></input>{" "}
-        <br />
-        <div className={isCorrect?"success-message":"error-message"}> {gameMessage}</div>
-        <button disabled = {gameOver}>Play</button>
-      </form>
-      <div className="game-stats">
-      <p>You have attempted {gameCount} /20</p>
-      <p>
-          You had {gameCount - failureCount} correct and {failureCount} wrong
-        </p>
-        <h3>The different attempts </h3>
-      <ul>{gameStats.map((stat,index)=>(
-        <li key={index}>{stat.lang} - {stat.color} {stat.isRight ? <DoneIcon style={{color:"green"}}/> : <CloseIcon style={{color:"red"}}/>}</li>
-      ))}</ul>
-      </div>
+      {langColVisility &&
+        <ul className="all-lang-color">
+          <h2>Remember if you can</h2>
+          {db.map((field, index) => (
+            <li
+              key={index}
+              style={{ background: field.color, marginBottom: "1rem" }}
+            >
+              <span>{field.lang}</span> - <span>{field.color}</span>
+            </li>
+          ))}
+        </ul>
+      }{" "}
+      {/* display all languages and color combinations for few seconds */}
+      {!langColVisility &&
+        <div className="game">
+          <h3>Instructions</h3>
+          <p>
+            To play this game you have to enter a programming language in the
+            first field and it's color match in the second field
+          </p>
+          <form onSubmit={(e) => handleSubmit(e)}>
+            <label htmlFor="l1">Programming Language: </label>
+            <input
+              id="l1"
+              type="text"
+              name="progLang"
+              className="br"
+              onChange={handleChange}
+              value={gameData.progLang}
+            />{" "}
+            <br />
+            <label htmlFor="l2">Language color: </label>{" "}
+            <input
+              type="text"
+              name="color"
+              onChange={handleChange}
+              value={gameData.color}
+            ></input>{" "}
+            <br />
+            <div className={isCorrect ? "success-message" : "error-message"}>
+              {" "}
+              {gameMessage}
+            </div>
+            <button disabled={gameOver}>Play</button>
+          </form>
+          <div className="game-stats">
+            <p>You have attempted {gameCount} /20</p>
+            <p>
+              You had {gameCount - failureCount} correct and {failureCount}{" "}
+              wrong
+            </p>
+            {gameOver && (
+              <>
+                <h3>The different attempts </h3>
+                <ul>
+                  {gameStats.map((stat, index) => (
+                    <li key={index}>
+                      {stat.lang} - {stat.color}{" "}
+                      {stat.isRight ? (
+                        <DoneIcon style={{ color: "green" }} />
+                      ) : (
+                        <CloseIcon style={{ color: "red" }} />
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+        </div>
+      }
     </div>
   );
 }
