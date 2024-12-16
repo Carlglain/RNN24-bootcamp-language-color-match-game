@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import "./App.css";
+import DoneIcon from '@mui/icons-material/Done';
+import CloseIcon from '@mui/icons-material/Close';
 function App() {
   const [gameData, setGameData] = useState({
     progLang: " ",
     color: " ",
   });
 
-  let gameStats = []
+const [gameStats, setGameStats] = useState([])
   const [gameMessage,setGameMessage] = useState("") // set success or failure message
   const [isCorrect, setIsCorrect] = useState(true) //checks whethere the language color combination is correct
   const [failureCount, setFailureCount] = useState(0) //count total number of errors
@@ -70,7 +72,12 @@ function App() {
       setFailureCount((ct) => ct + 1);
       console.log(failureCount);
     } 
-  gameStats.append({lang:gameData.progLang,color:gameData.color,isRight:isCorrect});
+    // Update gameStats state
+    setGameStats((prevStats) => [
+      ...prevStats,
+      { lang: gameData.progLang, color: gameData.color, isRight: isCorrect },
+    ]);
+
     // Clear input fields after submission
     setGameData({ progLang: "", color: "" });
   };
@@ -111,7 +118,10 @@ function App() {
       <p>
           You had {gameCount - failureCount} correct and {failureCount} wrong
         </p>
-      <p>{gameStats}</p>
+        <h3>The different attempts </h3>
+      <ul>{gameStats.map((stat,index)=>(
+        <li key={index}>{stat.lang} - {stat.color}- {stat.isRight ? <DoneIcon style={{color:"green"}}/> : <CloseIcon tyle={{color:"red"}}/>}</li>
+      ))}</ul>
       </div>
     </div>
   );
