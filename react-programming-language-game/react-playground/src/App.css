@@ -1,0 +1,11 @@
+.br{
+    
+    margin: 0.5%;
+}
+.success-message{
+    background: rgb(13, 255, 0);
+}
+.error-message{
+    background: red;
+    color: white;
+}
