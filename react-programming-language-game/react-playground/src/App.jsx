@@ -5,6 +5,8 @@ function App() {
     progLang: " ",
     color: " ",
   });
+
+  let gameStats = []
   const [gameMessage,setGameMessage] = useState("") // set success or failure message
   const [isCorrect, setIsCorrect] = useState(true) //checks whethere the language color combination is correct
   const [failureCount, setFailureCount] = useState(0) //count total number of errors
@@ -67,8 +69,8 @@ function App() {
       setIsCorrect(false);
       setFailureCount((ct) => ct + 1);
       console.log(failureCount);
-    }
-
+    } 
+  gameStats.append({lang:gameData.progLang,color:gameData.color,isRight:isCorrect});
     // Clear input fields after submission
     setGameData({ progLang: "", color: "" });
   };
@@ -109,6 +111,7 @@ function App() {
       <p>
           You had {gameCount - failureCount} correct and {failureCount} wrong
         </p>
+      <p>{gameStats}</p>
       </div>
     </div>
   );
